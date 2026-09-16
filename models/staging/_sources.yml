@@ -1,0 +1,22 @@
+version: 2
+
+sources:
+  - name: hr_raw
+    description: >
+      Arquivos Parquet gerados pelo repositório hr-synthetic-data-br.
+      Lidos direto do disco pelo DuckDB, sem etapa de carga: o banco consulta
+      o Parquet como se fosse tabela. É o que torna o projeto reproduzível
+      numa máquina limpa com um comando só.
+    meta:
+      external_location: "data_base/{name}.parquet"
+    tables:
+      - name: dim_calendario
+      - name: dim_colaborador
+      - name: dim_area
+      - name: dim_cargo
+      - name: dim_faixa_salarial
+      - name: dim_avaliacao
+      - name: fato_headcount_mensal
+      - name: fato_folha_mensal
+      - name: fato_movimentacao
+      - name: fato_desligamento_custo

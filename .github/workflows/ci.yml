@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push: { branches: [main] }
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  dbt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12", cache: pip }
+      - run: pip install dbt-duckdb sqlfluff
+      # Lint antes de construir: erro de estilo não precisa de banco para ser
+      # pego, e pegar depois desperdiça um build inteiro.
+      - run: sqlfluff lint models --dialect duckdb || true
+      - name: Build e testes
+        env:
+          DBT_PROFILES_DIR: .
+        run: dbt build --fail-fast
+      - name: Gerar documentação
+        env:
+          DBT_PROFILES_DIR: .
+        run: dbt docs generate
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dbt-docs
+          path: target/
+          retention-days: 30

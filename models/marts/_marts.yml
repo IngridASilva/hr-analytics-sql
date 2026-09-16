@@ -1,0 +1,96 @@
+version: 2
+
+models:
+  - name: fct_quadro_mensal
+    description: Foto mensal do quadro. Grão matrícula × competência. Semiaditivo no tempo.
+    columns:
+      - name: matricula
+        tests: [not_null]
+      - name: competencia
+        tests: [not_null]
+      - name: salario
+        tests:
+          - not_null
+          - dbt_utils_positivo:
+              config:
+                severity: warn
+      - name: id_area
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_area')
+                field: id_area
+      - name: modelo_trabalho
+        tests:
+          - accepted_values:
+              arguments:
+                values: ["Presencial", "Híbrido", "Remoto"]
+      - name: performance
+        tests:
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4, 5]
+                quote: false
+
+  - name: dim_colaborador
+    description: Dimensão de pessoa, sem nome e sem documento.
+    columns:
+      - name: matricula
+        tests: [unique, not_null]
+      - name: status
+        tests:
+          - accepted_values:
+              arguments:
+                values: ["Ativo", "Desligado"]
+      - name: tipo_desligamento
+        tests:
+          - accepted_values:
+              arguments:
+                values: ["Voluntário", "Involuntário"]
+              config:
+                where: "tipo_desligamento is not null"
+
+  - name: dim_area
+    columns:
+      - name: id_area
+        tests: [unique, not_null]
+
+  - name: fct_turnover_mensal
+    description: Turnover por área e competência, janela móvel de 12 meses.
+    columns:
+      - name: turnover_voluntario_12m
+        description: >
+          Nulo enquanto a janela de 12 meses está incompleta. Publicar taxa
+          anual com três meses de dado é o jeito mais rápido de perder a
+          confiança do usuário.
+
+  - name: fct_sobrevivencia_safra
+    description: Curva de sobrevivência por safra de admissão, com tratamento de censura.
+    columns:
+      - name: taxa_sobrevivencia
+        tests:
+          - dbt_utils_entre:
+              arguments:
+                minimo: 0
+                maximo: 1
+
+  - name: fct_custo_folha_mensal
+    columns:
+      - name: custo_total
+        tests: [not_null]
+      - name: fator_custo_sobre_salario
+        tests:
+          - dbt_utils_entre:
+              arguments:
+                minimo: 1.3
+                maximo: 3.5
+
+  - name: fct_variacao_folha
+    description: Decomposição da variação da massa salarial em dissídio, mérito, promoção e quadro.
+    columns:
+      - name: competencia
+        tests: [unique, not_null]
+
+  - name: fct_posicionamento_salarial
+    description: Dispersão salarial por cargo, com supressão de grupos com menos de 5 pessoas.
