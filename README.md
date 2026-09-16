@@ -1,5 +1,7 @@
 # hr-analytics-sql
 
+![CI](https://github.com/IngridASilva/hr-analytics-sql/actions/workflows/ci.yml/badge.svg)
+
 Camada analítica em SQL sobre a base de RH, construída com dbt e DuckDB.
 Dezessete modelos, 42 testes, tudo versionado e reproduzível com um comando.
 
