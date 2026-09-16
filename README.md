@@ -1,6 +1,9 @@
 # hr-analytics-sql
 
-![CI](https://github.com/IngridASilva/hr-analytics-sql/actions/workflows/ci.yml/badge.svg)
+![Grafo de linhagem](docs/img/lineage.png)
+
+<sub>Cinza: Parquet de origem · azul: staging · roxo: intermediário efêmero ·
+laranja: marts de RH · verde: marts financeiros.</sub>
 
 Camada analítica em SQL sobre a base de RH, construída com dbt e DuckDB.
 Dezessete modelos, 42 testes, tudo versionado e reproduzível com um comando.

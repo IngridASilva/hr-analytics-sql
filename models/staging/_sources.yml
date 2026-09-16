@@ -9,13 +9,14 @@ sources:
       numa máquina limpa com um comando só.
     meta:
       external_location: "data_base/{name}.parquet"
+    # Só as tabelas efetivamente consumidas são declaradas. Fonte declarada e
+    # nunca referenciada aparece como nó órfão no grafo de linhagem e sugere
+    # dependência que não existe.
     tables:
       - name: dim_calendario
       - name: dim_colaborador
       - name: dim_area
       - name: dim_cargo
-      - name: dim_faixa_salarial
-      - name: dim_avaliacao
       - name: fato_headcount_mensal
       - name: fato_folha_mensal
       - name: fato_movimentacao
