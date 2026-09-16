@@ -1,0 +1,8 @@
+Este arquivo existe só para o Git versionar a pasta.
+
+O Git não rastreia diretório vazio, apenas arquivo. Sem este marcador a pasta
+`warehouse/` desaparece no clone, e o DuckDB falha ao tentar criar o banco em
+um diretório que não existe. É uma falha que só aparece em máquina limpa, o
+que a torna especialmente chata: roda na sua e quebra no CI.
+
+O arquivo do banco em si fica fora do controle de versão, via .gitignore.
