@@ -1,0 +1,9 @@
+# Dependências fixadas por versão exata.
+#
+# Projeto dbt não tem pyproject.toml, e sem um arquivo de dependências o
+# `cache: pip` do setup-python falha antes mesmo de instalar qualquer coisa.
+# Fixar versão também evita que uma atualização de adaptador quebre o build
+# sem que nada tenha mudado no repositório.
+dbt-core==1.12.4
+dbt-duckdb==1.11.0
+duckdb==1.5.5

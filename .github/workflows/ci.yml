@@ -10,20 +10,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
-        with: { python-version: "3.12", cache: pip }
-      - run: pip install dbt-duckdb sqlfluff
-      # Lint antes de construir: erro de estilo não precisa de banco para ser
-      # pego, e pegar depois desperdiça um build inteiro.
-      - run: sqlfluff lint models --dialect duckdb || true
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - run: pip install -r requirements.txt
+
+      # Build e testes na mesma etapa: `dbt build` executa modelo e teste na
+      # ordem do grafo, então um modelo quebrado para antes de propagar sujeira
+      # para os de baixo.
       - name: Build e testes
         env:
           DBT_PROFILES_DIR: .
         run: dbt build --fail-fast
+
       - name: Gerar documentação
         env:
           DBT_PROFILES_DIR: .
         run: dbt docs generate
+
       - uses: actions/upload-artifact@v4
         with:
           name: dbt-docs
